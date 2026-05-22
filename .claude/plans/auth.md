@@ -20,17 +20,17 @@
 ## Чек-лист задач
 
 ### Подготовка
-- [ ] Установить зависимости в `backend/`:
+- [x] Установить зависимости в `backend/`:
   ```bash
   npm i @nestjs/cqrs @nestjs/jwt @nestjs/passport @nestjs/config \
         passport passport-jwt bcrypt class-validator class-transformer
   npm i -D @types/passport-jwt @types/bcrypt
   ```
-- [ ] Добавить в `backend/.env.example`: `JWT_SECRET=`, `JWT_EXPIRES_IN=1d`.
-- [ ] Создать локальный `backend/.env` со значениями.
+- [x] Добавить в `backend/.env.example`: `JWT_SECRET=`, `JWT_EXPIRES_IN=1d`.
+- [x] Создать локальный `backend/.env` со значениями.
 
 ### Prisma
-- [ ] В `prisma/schema.prisma` добавить модель `User`:
+- [x] В `prisma/schema.prisma` добавить модель `User`:
   ```prisma
   model User {
     id           String   @id @default(uuid())
@@ -42,36 +42,36 @@
   }
   ```
 - [ ] `docker compose up -d` (если ещё не запущено).
-- [ ] `npm run prisma:migrate -- --name add-user`.
+- [ ] `npm run prisma:migrate -- --name add-user` (требует запущенного Docker).
 
 ### PrismaModule (глобальный)
-- [ ] `src/prisma/prisma.service.ts` — `extends PrismaClient implements OnModuleInit`, `$connect` в `onModuleInit`.
-- [ ] `src/prisma/prisma.module.ts` — `@Global()`, `providers: [PrismaService]`, `exports: [PrismaService]`.
+- [x] `src/prisma/prisma.service.ts` — `extends PrismaClient implements OnModuleInit`, `$connect` в `onModuleInit`.
+- [x] `src/prisma/prisma.module.ts` — `@Global()`, `providers: [PrismaService]`, `exports: [PrismaService]`.
 
 ### UsersModule
-- [ ] `src/users/users.module.ts` — `imports: [CqrsModule]`, `providers: [...CommandHandlers, ...QueryHandlers]`. **Не импортирует** AuthModule.
-- [ ] `src/users/domain/user.dto.ts` — внешний `UserDto { id, email, name }` (без `passwordHash`).
-- [ ] `src/users/commands/create-user.command.ts` — `class CreateUserCommand { email, name, passwordHash }`.
-- [ ] `src/users/commands/create-user.handler.ts` — `@CommandHandler`, инжектит `PrismaService`, `prisma.user.create`, возвращает `UserDto`. На Prisma `P2002` — `ConflictException`.
-- [ ] `src/users/queries/get-user-by-email.query.ts` — `{ email }`.
-- [ ] `src/users/queries/get-user-by-email.handler.ts` — возвращает `{ id, email, name, passwordHash } | null` (внутренний контракт для Auth).
-- [ ] `src/users/queries/get-user-by-id.query.ts`.
-- [ ] `src/users/queries/get-user-by-id.handler.ts` — возвращает `UserDto | null`.
+- [x] `src/users/users.module.ts` — `imports: [CqrsModule]`, `providers: [...CommandHandlers, ...QueryHandlers]`. **Не импортирует** AuthModule.
+- [x] `src/users/domain/user.dto.ts` — внешний `UserDto { id, email, name }` (без `passwordHash`).
+- [x] `src/users/commands/create-user.command.ts` — `class CreateUserCommand { email, name, passwordHash }`.
+- [x] `src/users/commands/create-user.handler.ts` — `@CommandHandler`, инжектит `PrismaService`, `prisma.user.create`, возвращает `UserDto`. На Prisma `P2002` — `ConflictException`.
+- [x] `src/users/queries/get-user-by-email.query.ts` — `{ email }`.
+- [x] `src/users/queries/get-user-by-email.handler.ts` — возвращает `{ id, email, name, passwordHash } | null` (внутренний контракт для Auth).
+- [x] `src/users/queries/get-user-by-id.query.ts`.
+- [x] `src/users/queries/get-user-by-id.handler.ts` — возвращает `UserDto | null`.
 
 ### AuthModule
-- [ ] `src/auth/auth.module.ts` — `imports: [CqrsModule, PassportModule, JwtModule.registerAsync({...})]`. **Не импортирует** UsersModule.
-- [ ] `src/auth/dto/register.dto.ts` — `@IsEmail`, `@IsString`, `@MinLength(8)` для пароля.
-- [ ] `src/auth/dto/login.dto.ts` — `@IsEmail`, `@IsString`.
-- [ ] `src/auth/auth.service.ts` — инжектит `CommandBus`, `QueryBus`, `JwtService`:
+- [x] `src/auth/auth.module.ts` — `imports: [CqrsModule, PassportModule, JwtModule.registerAsync({...})]`. **Не импортирует** UsersModule.
+- [x] `src/auth/dto/register.dto.ts` — `@IsEmail`, `@IsString`, `@MinLength(8)` для пароля.
+- [x] `src/auth/dto/login.dto.ts` — `@IsEmail`, `@IsString`.
+- [x] `src/auth/auth.service.ts` — инжектит `CommandBus`, `QueryBus`, `JwtService`:
   - `register`: `QueryBus.execute(GetUserByEmailQuery)` → 409 если найден; `bcrypt.hash`; `CommandBus.execute(CreateUserCommand)`; подписать JWT.
   - `login`: `QueryBus.execute(GetUserByEmailQuery)`; `bcrypt.compare` → 401 при неудаче; подписать JWT.
-- [ ] `src/auth/auth.controller.ts` — `@Controller('auth')`, `POST register`, `POST login`.
-- [ ] `src/auth/strategies/jwt.strategy.ts` — `PassportStrategy(Strategy)`, `validate(payload)` через `QueryBus.execute(GetUserByIdQuery)`.
-- [ ] `src/auth/guards/jwt-auth.guard.ts` — `AuthGuard('jwt')`.
+- [x] `src/auth/auth.controller.ts` — `@Controller('auth')`, `POST register`, `POST login`.
+- [x] `src/auth/strategies/jwt.strategy.ts` — `PassportStrategy(Strategy)`, `validate(payload)` через `QueryBus.execute(GetUserByIdQuery)`.
+- [x] `src/auth/guards/jwt-auth.guard.ts` — `AuthGuard('jwt')`.
 
 ### AppModule / main.ts
-- [ ] `app.module.ts`: `ConfigModule.forRoot({ isGlobal: true })`, `CqrsModule.forRoot()`, `PrismaModule`, `UsersModule`, `AuthModule`.
-- [ ] `main.ts`: `app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }))`.
+- [x] `app.module.ts`: `ConfigModule.forRoot({ isGlobal: true })`, `CqrsModule.forRoot()`, `PrismaModule`, `UsersModule`, `AuthModule`.
+- [x] `main.ts`: `app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }))`.
 
 ### Архитектурный инвариант (CQRS вместо прямых импортов)
 
@@ -80,11 +80,11 @@
 `UsersModule` про `auth/` ничего не знает.
 
 ### Верификация
-- [ ] `npm run start:dev` стартует без ошибок.
+- [ ] `npm run start:dev` стартует без ошибок (требует Docker + миграции).
 - [ ] `POST /api/auth/register` → `{ accessToken, user: { id, email, name } }`; `passwordHash` отсутствует в ответе.
 - [ ] Повторный `register` с тем же email → `409 Conflict`.
 - [ ] `POST /api/auth/login` с верным паролем → `{ accessToken, user }`.
 - [ ] `login` с неверным паролем → `401 Unauthorized`.
 - [ ] `register` с невалидным email или паролем < 8 символов → `400 Bad Request`.
-- [ ] `grep -R "from '.*users" backend/src/auth` показывает только импорты `*.command` / `*.query`.
-- [ ] `grep -R "from '.*auth" backend/src/users` пуст.
+- [x] `grep -R "from '.*users" backend/src/auth` показывает только импорты `*.command` / `*.query` / `user.dto`.
+- [x] `grep -R "from '.*auth" backend/src/users` пуст.
