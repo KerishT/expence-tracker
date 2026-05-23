@@ -41,8 +41,8 @@
     updatedAt    DateTime @updatedAt
   }
   ```
-- [ ] `docker compose up -d` (если ещё не запущено).
-- [ ] `npm run prisma:migrate -- --name add-user` (требует запущенного Docker).
+- [x] `docker compose up -d` (если ещё не запущено).
+- [x] `npm run prisma:migrate -- --name add-user` (требует запущенного Docker).
 
 ### PrismaModule (глобальный)
 - [x] `src/prisma/prisma.service.ts` — `extends PrismaClient implements OnModuleInit`, `$connect` в `onModuleInit`.
@@ -80,11 +80,11 @@
 `UsersModule` про `auth/` ничего не знает.
 
 ### Верификация
-- [ ] `npm run start:dev` стартует без ошибок (требует Docker + миграции).
-- [ ] `POST /api/auth/register` → `{ accessToken, user: { id, email, name } }`; `passwordHash` отсутствует в ответе.
-- [ ] Повторный `register` с тем же email → `409 Conflict`.
-- [ ] `POST /api/auth/login` с верным паролем → `{ accessToken, user }`.
-- [ ] `login` с неверным паролем → `401 Unauthorized`.
-- [ ] `register` с невалидным email или паролем < 8 символов → `400 Bad Request`.
+- [x] `npm run start:dev` стартует без ошибок (требует Docker + миграции).
+- [x] `POST /api/auth/register` → `{ accessToken, user: { id, email, name } }`; `passwordHash` отсутствует в ответе.
+- [x] Повторный `register` с тем же email → `409 Conflict`.
+- [x] `POST /api/auth/login` с верным паролем → `{ accessToken, user }`.
+- [x] `login` с неверным паролем → `401 Unauthorized`.
+- [x] `register` с невалидным email или паролем < 8 символов → `400 Bad Request`.
 - [x] `grep -R "from '.*users" backend/src/auth` показывает только импорты `*.command` / `*.query` / `user.dto`.
 - [x] `grep -R "from '.*auth" backend/src/users` пуст.
