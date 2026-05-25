@@ -50,3 +50,30 @@ npm install                 # From root — installs all workspaces
 - `backend/` — NestJS. Entry: `src/main.ts`. API prefix `/api`, port 3001. Prisma schema in `prisma/schema.prisma`.
 - `docker-compose.yml` — PostgreSQL 16 (db: `expence_tracker`, user/pass: `postgres/postgres`).
 - Database URL configured via `DATABASE_URL` env var (see `backend/.env.example`).
+
+## Frontend Architecture (Feature Slice Design)
+
+`frontend/src/` follows **Feature Slice Design** layered on top of Next.js App Router.
+
+```
+src/
+  app/          # Next.js App Router — routing only (thin page.tsx/layout.tsx files)
+  views/        # FSD "pages" layer (renamed to avoid conflict with Next). Page compositions.
+  widgets/      # Independent UI blocks composed of features/entities
+  features/     # User interactions: auth, expenses, etc. Each has api/, model/, ui/
+  entities/     # Business objects: user, category, expense (model/types.ts)
+  shared/       # Reusable infrastructure
+    api/        # fetch wrapper (http.ts) + response types
+    config/     # constants (API_BASE)
+    lib/        # utils (cn), storage (localStorage token helpers)
+    ui/         # shadcn/ui components (button, input, card, form, sonner, …)
+    hooks/      # shared React hooks
+```
+
+**Rules:**
+- Imports flow **downward only**: `app → views → widgets → features → entities → shared`.
+- `src/app/` contains only routing — no business logic.
+- shadcn components live in `shared/ui/`. Add with `npx shadcn@latest add <component>` (aliases already configured in `components.json`).
+- Auth state: **Zustand** store with `persist` middleware (`features/auth/model/store.ts`).
+- Forms: **react-hook-form** + **zod** (`@hookform/resolvers/zod`).
+- API calls: relative `/api/*` paths — Next rewrites proxy them to `http://localhost:3001/api/*` (no CORS issues).
