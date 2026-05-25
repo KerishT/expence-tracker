@@ -12,7 +12,7 @@ export function useRegister() {
   const setSession = useAuthStore((s) => s.setSession);
   const router = useRouter();
 
-  const register = async (values: RegisterFormValues) => {
+  const register = async ({ terms: _, ...values }: RegisterFormValues) => {
     setIsPending(true);
     try {
       const res = await authApi.register(values);
