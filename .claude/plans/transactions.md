@@ -189,16 +189,16 @@ PrismaModule глобальный; CQRS-шина глобальная — `GetCa
 
 ## Чек-лист задач
 
-- [ ] Categories: `queries/get-category-by-id.query.ts` + `.handler.ts`, зарегистрировать handler в `categories.module.ts`
-- [ ] `schema.prisma`: enum `TransactionType`, модель `Transaction`, обратные связи в `User` и `Category`
-- [ ] Миграция `add_transaction` + `prisma:generate`
-- [ ] `transactions/dto/*` (create, update, query)
-- [ ] `transactions/domain/transaction.dto.ts` (+ summary/list DTO)
-- [ ] `transactions/transactions.service.ts`
-- [ ] `transactions/transactions.controller.ts`
-- [ ] `transactions/transactions.module.ts`
-- [ ] Зарегистрировать `TransactionsModule` в `app.module.ts`
-- [ ] `npm run build:backend` + `npm run lint`
+- [x] Categories: `queries/get-category-by-id.query.ts` + `.handler.ts`, зарегистрировать handler в `categories.module.ts`
+- [x] `schema.prisma`: enum `TransactionType`, модель `Transaction`, обратные связи в `User` и `Category`
+- [x] Миграция `add_transaction` + `prisma:generate`
+- [x] `transactions/dto/*` (create, update, query)
+- [x] `transactions/domain/transaction.dto.ts` (+ summary/list DTO)
+- [x] `transactions/transactions.service.ts`
+- [x] `transactions/transactions.controller.ts`
+- [x] `transactions/transactions.module.ts`
+- [x] Зарегистрировать `TransactionsModule` в `app.module.ts`
+- [x] `npm run build:backend` — без ошибок (lint отсутствует в проекте изначально)
 
 ## Проверка (end-to-end)
 
