@@ -44,10 +44,18 @@ npm run prisma:migrate      # Run migrations
 npm install                 # From root — installs all workspaces
 ```
 
+## Commits
+
+Conventional Commits: `<type>(<scope>): <subject>` — lowercase, imperative, no dot.
+Types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`.
+
 ## Architecture
 
 - `frontend/` — Next.js App Router. Entry: `src/app/layout.tsx`, `src/app/page.tsx`. Path alias `@/*` maps to `src/*`.
+  - Route groups: `(auth)` — публичные страницы (login, register); `(protected)` — защищённые (dashboard и др.), `layout.tsx` проверяет токен.
 - `backend/` — NestJS. Entry: `src/main.ts`. API prefix `/api`, port 3001. Prisma schema in `prisma/schema.prisma`.
+  - Auth: JWT (`@nestjs/jwt` + `passport-jwt`). Защищённые роуты используют `JwtAuthGuard`.
+  - Backend-модули (`users`, `categories`, `transactions`) следуют CQRS-подобному паттерну: `commands/` (мутации), `queries/` (чтение), `domain/` (DTO доменного слоя).
 - `docker-compose.yml` — PostgreSQL 16 (db: `expence_tracker`, user/pass: `postgres/postgres`).
 - Database URL configured via `DATABASE_URL` env var (see `backend/.env.example`).
 
