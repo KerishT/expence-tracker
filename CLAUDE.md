@@ -44,6 +44,12 @@ npm run prisma:migrate      # Run migrations
 npm install                 # From root — installs all workspaces
 ```
 
+## Branching (GitHub Flow)
+
+- `main` — всегда стабильная, деплоится напрямую. Не коммитить напрямую.
+- Любая новая работа — отдельная ветка от `main`: `feature/<name>`, `fix/<name>`, `chore/<name>`
+- Ветка → PR → review → merge в `main` → удалить ветку
+
 ## Commits
 
 Conventional Commits: `<type>(<scope>): <subject>` — lowercase, imperative, no dot.
