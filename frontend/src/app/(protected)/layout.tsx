@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/features/auth/model/store';
+import { AppSidebar } from '@/widgets/app-sidebar/ui/AppSidebar';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, _hasHydrated } = useAuthStore();
@@ -18,5 +19,12 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   if (!isAuthenticated) return null;
 
-  return <>{children}</>;
+  return (
+    <div className="flex h-screen overflow-hidden">
+      <AppSidebar />
+      <main className="flex-1 overflow-y-auto p-8">
+        {children}
+      </main>
+    </div>
+  );
 }
