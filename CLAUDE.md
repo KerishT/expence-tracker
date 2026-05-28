@@ -44,6 +44,19 @@ npm run prisma:migrate      # Run migrations
 npm install                 # From root — installs all workspaces
 ```
 
+## Branching (GitHub Flow)
+
+- `main` — всегда стабильная, деплоится напрямую. Не коммитить напрямую.
+- Любая новая работа — отдельная ветка от `main`: `feature/<name>`, `fix/<name>`, `chore/<name>`
+- Ветка → PR → review → merge в `main` → удалить ветку
+
+## Pull Requests
+
+- Title — Conventional Commits: `<type>(<scope>): <subject>`.
+- Body обязательно содержит: **Summary** (что реализовано, затронутые endpoints/модули), **Test plan** (шаги для проверки вручную).
+- PR создавать через `gh pr create`; перед созданием запустить `git diff main...HEAD --stat` для составления описания.
+- После merge ветку удалять: `git branch -d <branch> && git push origin --delete <branch>`.
+
 ## Commits
 
 Conventional Commits: `<type>(<scope>): <subject>` — lowercase, imperative, no dot.
