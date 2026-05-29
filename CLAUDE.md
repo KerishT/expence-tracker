@@ -15,7 +15,7 @@ Expense Tracker — monorepo with npm workspaces containing a Next.js frontend a
 ### Development
 ```bash
 npm run dev:frontend        # Next.js dev server
-npm run dev:backend         # NestJS watch mode
+npm run dev:backend         # Docker up + migrations + NestJS watch mode
 docker compose up -d        # Start PostgreSQL on port 5432
 ```
 
@@ -29,12 +29,6 @@ npm run build:backend
 ```bash
 npm run lint                # Lint all workspaces
 npm run format              # Prettier across all files
-```
-
-### Prisma (run from backend/)
-```bash
-npm run prisma:generate     # Generate Prisma client
-npm run prisma:migrate      # Run migrations
 ```
 
 ### Install Dependencies
