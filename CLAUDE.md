@@ -1,6 +1,4 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+# Expense Tracker
 
 ## Project Overview
 
@@ -64,37 +62,14 @@ Types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`.
 
 ## Architecture
 
-- `frontend/` — Next.js App Router. Entry: `src/app/layout.tsx`, `src/app/page.tsx`. Path alias `@/*` maps to `src/*`.
-  - Route groups: `(auth)` — публичные страницы (login, register); `(protected)` — защищённые (dashboard и др.), `layout.tsx` проверяет токен.
-- `backend/` — NestJS. Entry: `src/main.ts`. API prefix `/api`, port 3001. Prisma schema in `prisma/schema.prisma`.
-  - Auth: JWT (`@nestjs/jwt` + `passport-jwt`). Защищённые роуты используют `JwtAuthGuard`.
-  - Backend-модули (`users`, `categories`, `transactions`) следуют CQRS-подобному паттерну: `commands/` (мутации), `queries/` (чтение), `domain/` (DTO доменного слоя).
-- `docker-compose.yml` — PostgreSQL 16 (db: `expence_tracker`, user/pass: `postgres/postgres`).
-- Database URL configured via `DATABASE_URL` env var (see `backend/.env.example`).
+Монорепо из двух workspace. Детали каждого — в собственных файлах:
 
-## Frontend Architecture (Feature Slice Design)
+- **`frontend/`** — Next.js App Router (port 3000), Feature Slice Design. См. `frontend/CLAUDE.md`.
+- **`backend/`** — NestJS (port 3001, префикс `/api`), Prisma + Postgres, JWT, CQRS-подобные модули. См. `backend/CLAUDE.md`.
 
-`frontend/src/` follows **Feature Slice Design** layered on top of Next.js App Router.
-
-```
-src/
-  app/          # Next.js App Router — routing only (thin page.tsx/layout.tsx files)
-  views/        # FSD "pages" layer (renamed to avoid conflict with Next). Page compositions.
-  widgets/      # Independent UI blocks composed of features/entities
-  features/     # User interactions: auth, expenses, etc. Each has api/, model/, ui/
-  entities/     # Business objects: user, category, expense (model/types.ts)
-  shared/       # Reusable infrastructure
-    api/        # fetch wrapper (http.ts) + response types
-    config/     # constants (API_BASE)
-    lib/        # utils (cn), storage (localStorage token helpers)
-    ui/         # shadcn/ui components (button, input, card, form, sonner, …)
-    hooks/      # shared React hooks
-```
-
-**Rules:**
-- Imports flow **downward only**: `app → views → widgets → features → entities → shared`.
-- `src/app/` contains only routing — no business logic.
-- shadcn components live in `shared/ui/`. Add with `npx shadcn@latest add <component>` (aliases already configured in `components.json`).
-- Auth state: **Zustand** store with `persist` middleware (`features/auth/model/store.ts`).
-- Forms: **react-hook-form** + **zod** (`@hookform/resolvers/zod`).
-- API calls: relative `/api/*` paths — Next rewrites proxy them to `http://localhost:3001/api/*` (no CORS issues).
+**Cross-cutting:**
+- Фронт обращается к бэку по относительным `/api/*`; `frontend/next.config.ts` через `rewrites()` проксирует их на `http://localhost:3001/api/*` — единый origin, без CORS.
+- Auth — JWT в заголовке `Authorization: Bearer`. Бэк отдаёт `{ accessToken, user }`, фронт хранит сессию в Zustand (`persist`, localStorage ключ `auth`).
+- `docker-compose.yml` — PostgreSQL 16 (db: `expence_tracker`, user/pass: `postgres/postgres`, порт 5432).
+- БД-подключение и JWT-секрет — через env (`DATABASE_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN`), см. `backend/.env.example`.
+- `npm run dev:backend` (из корня) сам поднимает Docker, прогоняет миграции и стартует watch-режим.
