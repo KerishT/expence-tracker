@@ -8,7 +8,7 @@ Next.js 16 (App Router) + React 19 + Tailwind CSS 4 + TypeScript. Архитек
 npm run dev                 # next dev (по умолчанию :3000)
 npm run build               # next build
 npm run start               # next start (prod)
-npm run lint                # next lint
+npm run lint                # eslint . (flat config, eslint-config-next)
 ```
 
 Path alias: `@/*` → `src/*`.
