@@ -11,6 +11,11 @@ import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { QueryTransactionsDto } from './dto/query-transactions.dto';
 
+/**
+ * Бизнес-логика транзакций. Все операции скоупятся по `userId`.
+ * Со своей таблицей `transaction` работает через Prisma напрямую, а доступ к
+ * чужим данным (user, category) получает через CQRS `QueryBus`.
+ */
 @Injectable()
 export class TransactionsService {
   constructor(
@@ -18,6 +23,15 @@ export class TransactionsService {
     private readonly queryBus: QueryBus,
   ) {}
 
+  /**
+   * Создаёт транзакцию для пользователя, предварительно убедившись, что
+   * пользователь существует, а категория существует и принадлежит ему.
+   * @param userId - ID пользователя-владельца транзакции.
+   * @param dto - Данные новой транзакции (сумма, тип, дата, категория, описание).
+   * @returns Domain DTO созданной транзакции.
+   * @throws {NotFoundException} Если пользователь не найден.
+   * @throws {NotFoundException} Если категория не найдена или не принадлежит пользователю.
+   */
   async create(userId: string, dto: CreateTransactionDto): Promise<TransactionDto> {
     const user = await this.queryBus.execute<GetUserByIdQuery, UserDto | null>(
       new GetUserByIdQuery(userId),
@@ -42,6 +56,15 @@ export class TransactionsService {
     return this.toDto(transaction);
   }
 
+  /**
+   * Возвращает список транзакций пользователя (по убыванию даты) вместе со сводкой
+   * доходов/расходов/баланса. При указании `year`/`month` фильтрует по периоду:
+   * только год — весь год; год и месяц — конкретный месяц (если задан лишь месяц,
+   * берётся текущий год).
+   * @param userId - ID пользователя, чьи транзакции запрашиваются.
+   * @param query - Опциональные фильтры периода: `year` (2000–2100) и `month` (1–12).
+   * @returns Объект `{ items, summary: { totalIncome, totalExpense, balance } }`.
+   */
   async findAllForUser(userId: string, query: QueryTransactionsDto): Promise<TransactionListDto> {
     const where: any = { userId };
 
@@ -87,6 +110,13 @@ export class TransactionsService {
     };
   }
 
+  /**
+   * Находит одну транзакцию пользователя по её ID.
+   * @param userId - ID пользователя-владельца (для скоупинга).
+   * @param id - UUID транзакции.
+   * @returns Domain DTO найденной транзакции.
+   * @throws {NotFoundException} Если транзакция не найдена или не принадлежит пользователю.
+   */
   async findOne(userId: string, id: string): Promise<TransactionDto> {
     const transaction = await this.prisma.transaction.findFirst({
       where: { id, userId },
@@ -95,6 +125,16 @@ export class TransactionsService {
     return this.toDto(transaction);
   }
 
+  /**
+   * Частично обновляет транзакцию пользователя. Изменяются только переданные поля;
+   * при смене категории проверяется, что новая категория принадлежит пользователю.
+   * @param userId - ID пользователя-владельца (для скоупинга).
+   * @param id - UUID обновляемой транзакции.
+   * @param dto - Поля для обновления (любое подмножество полей создания).
+   * @returns Domain DTO обновлённой транзакции.
+   * @throws {NotFoundException} Если транзакция не найдена или не принадлежит пользователю.
+   * @throws {NotFoundException} Если передан `categoryId` несуществующей/чужой категории.
+   */
   async update(userId: string, id: string, dto: UpdateTransactionDto): Promise<TransactionDto> {
     await this.findOne(userId, id);
 
@@ -118,11 +158,23 @@ export class TransactionsService {
     return this.toDto(updated);
   }
 
+  /**
+   * Удаляет транзакцию пользователя, предварительно проверив её принадлежность.
+   * @param userId - ID пользователя-владельца (для скоупинга).
+   * @param id - UUID удаляемой транзакции.
+   * @returns Промис без значения по завершении удаления.
+   * @throws {NotFoundException} Если транзакция не найдена или не принадлежит пользователю.
+   */
   async remove(userId: string, id: string): Promise<void> {
     await this.findOne(userId, id);
     await this.prisma.transaction.delete({ where: { id } });
   }
 
+  /**
+   * Маппит Prisma-модель транзакции в domain DTO, приводя `Decimal` суммы к `number`.
+   * @param transaction - Запись транзакции из Prisma.
+   * @returns Domain DTO, безопасный для отдачи наружу.
+   */
   private toDto(transaction: Transaction): TransactionDto {
     return {
       id: transaction.id,

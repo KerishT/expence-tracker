@@ -82,3 +82,7 @@ Handler: класс с `@QueryHandler(Query)` / `@CommandHandler(Command)`, ре
 - Ошибки — стандартные Nest-исключения: `NotFoundException`, `ConflictException`, `UnauthorizedException`.
 - Входные DTO — в `dto/`, валидируются `class-validator`; `UpdateDto` строится через `PartialType` (`@nestjs/mapped-types`).
 - TypeScript strict, `target ES2021`, `module commonjs`.
+
+## Documentation
+После изменения методов — обновляй JSDoc.
+Для DTO и контроллеров — добавляй/обновляй Swagger декораторы.
