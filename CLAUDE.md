@@ -67,3 +67,7 @@ Types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`.
 - `docker-compose.yml` — PostgreSQL 16 (db: `expence_tracker`, user/pass: `postgres/postgres`, порт 5432).
 - БД-подключение и JWT-секрет — через env (`DATABASE_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN`), см. `backend/.env.example`.
 - `npm run dev:backend` (из корня) сам поднимает Docker, прогоняет миграции и стартует watch-режим.
+
+## Documents
+При добавлении функционала проверяй .claude/docs/*.
+Актуализируй файлы при изменении архитектуры или API.
