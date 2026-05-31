@@ -49,11 +49,6 @@ npm install                 # From root — installs all workspaces
 - PR создавать через `gh pr create`; перед созданием запустить `git diff main...HEAD --stat` для составления описания.
 - После merge ветку удалять: `git branch -d <branch> && git push origin --delete <branch>`.
 
-## Commits
-
-Conventional Commits: `<type>(<scope>): <subject>` — lowercase, imperative, no dot.
-Types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`.
-
 ## Architecture
 
 Монорепо из двух workspace. Детали каждого — в собственных файлах:
