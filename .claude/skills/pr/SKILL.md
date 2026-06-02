@@ -1,61 +1,45 @@
 ---
 name: pr
-description: Создать PR в GitHub с заданным названием ветки и заголовком
-user_invocable: true
-allowedTools:
-  - Bash(git *)
-  - Bash(gh *)
-effort: low
+description: Создать Pull Request на GitHub с заданными названием и веткой.
+allowed-tools: Bash(git *), Bash(gh *)
+user-invocable: true
+argument-hint: <title> <base-branch, default main>
 ---
+
+# PR Skill
+
+Создай Pull Request на GitHub, соблюдая соглашения проекта.
 
 ## Аргументы
 
-```
-/pr <branch> <title>
-```
+- $0 - название PR
+- $1 - целевая ветка
 
-- `<branch>` — название ветки для PR (например, `feature/add-auth`)
-- `<title>` — заголовок PR в формате Conventional Commits (например, `feat(backend): добавить авторизацию`)
+## Подготовка
 
-Если аргументы не переданы — запросить у пользователя.
+1. Проверь что ветка готова:
+   !`bash ${CLAUDE_SKILL_DIR}/scripts/validate.sh`
+2. Получи diff от базовой ветки:
+   !`git diff ${ARGUMENTS:-main}..HEAD`
+3. Получи список коммитов:
+   !`git log ${ARGUMENTS:-main}..HEAD --oneline`
 
-## Алгоритм
+## Задача
 
-1. Получить аргументы `branch` и `title` из вызова скилла
-2. Проверить, что ветка существует: `git branch --list <branch>`
-   - Если нет — сообщить об ошибке и остановиться
-3. Получить список коммитов ветки относительно `main`:
-   ```
-   git log main...<branch> --pretty=format:"%h %s%n%b" --reverse
-   ```
-4. Проверить, что ветка запушена в origin: `git ls-remote --heads origin <branch>`
-   - Если нет — запушить: `git push -u origin <branch>`
-5. Составить тело PR на основе коммитов:
-   - **Summary**: кратко что реализовано, какие модули/endpoints затронуты
-   - **Test plan**: конкретные шаги для ручной проверки (основной сценарий + граничные случаи)
-6. Создать PR через `gh pr create`:
-   ```
-   gh pr create --base main --head <branch> --title "<title>" --body "..."
-   ```
-7. Вывести ссылку на созданный PR
+Используя данные выше — заполни шаблон
+из @template.md.
+Посмотри пример хорошего PR: @examples/good-pr.md
 
-## Формат тела PR
+## Создание PR
 
-```markdown
-## Summary
-- <что реализовано>
-- <затронутые модули / endpoints>
-
-## Test plan
-- [ ] <шаг 1>
-- [ ] <шаг 2>
-- [ ] <граничный случай>
-```
+Создай PR командой:
+gh pr create \
+ --title "$0 или сгенерированный title" \
+ --body "заполненный шаблон" \
+ --base "${ARGUMENTS:-main}"
 
 ## Правила
 
-- Заголовок PR — Conventional Commits: `<type>(<scope>): <subject>` на русском
-- Тело PR — на русском языке
-- Никогда не пушить в `main` напрямую
-- Не создавать PR если нет коммитов относительно `main`
-- Base ветка всегда `main`
+- Заголовок по conventional commits
+- Если ветка не запушена:
+  git push --set-upstream origin HEAD
