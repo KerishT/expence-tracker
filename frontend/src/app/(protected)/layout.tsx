@@ -20,10 +20,10 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
   if (!isAuthenticated) return null;
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-background">
       <AppSidebar />
-      <main className="flex-1 overflow-y-auto p-8">
-        {children}
+      <main className="scrollbar-slim flex-1 overflow-y-auto px-6 py-6 md:px-10 md:py-8">
+        <div className="mx-auto w-full max-w-[1400px]">{children}</div>
       </main>
     </div>
   );

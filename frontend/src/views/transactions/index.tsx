@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/shared/ui/dialog';
+import { Plus } from 'lucide-react';
 import { AddTransactionForm } from '@/features/transactions/ui/AddTransactionForm';
 import { RecentTransactions } from '@/widgets/recent-transactions/ui/RecentTransactions';
 import { useTransactions } from '@/features/transactions/model/use-transactions';
@@ -28,10 +29,16 @@ export function TransactionsView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Транзакции</h1>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-sm text-muted-foreground">Все ваши доходы и расходы</p>
+          <h1 className="font-heading text-3xl font-extrabold tracking-tight">Транзакции</h1>
+        </div>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger render={<Button />}>+ Добавить</DialogTrigger>
+          <DialogTrigger render={<Button size="lg" />}>
+            <Plus />
+            Добавить
+          </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Новая транзакция</DialogTitle>
@@ -41,12 +48,15 @@ export function TransactionsView() {
         </Dialog>
       </div>
 
-      <RecentTransactions
-        items={data?.items ?? []}
-        categories={categories}
-        loading={loading}
-        error={error}
-      />
+      <div className="mx-auto w-full max-w-2xl">
+        <RecentTransactions
+          items={data?.items ?? []}
+          categories={categories}
+          loading={loading}
+          error={error}
+          pageSize={12}
+        />
+      </div>
     </div>
   );
 }

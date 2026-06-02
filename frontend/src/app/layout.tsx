@@ -1,11 +1,20 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { Geist } from 'next/font/google';
+import { Sora, Plus_Jakarta_Sans } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { Toaster } from '@/shared/ui/sonner';
 import { cn } from '@/shared/lib/utils';
 
-const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
+const display = Sora({
+  subsets: ['latin'],
+  variable: '--font-heading',
+  weight: ['500', '600', '700', '800'],
+});
+
+const sans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  variable: '--font-sans',
+});
 
 export const metadata: Metadata = {
   title: 'Expense Tracker',
@@ -18,11 +27,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ru" className={cn('font-sans', geist.variable)} suppressHydrationWarning>
+    <html
+      lang="ru"
+      className={cn('font-sans antialiased', sans.variable, display.variable)}
+      suppressHydrationWarning
+    >
       <body>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute="class" forcedTheme="dark" disableTransitionOnChange>
           {children}
-          <Toaster richColors />
+          <Toaster richColors theme="dark" />
         </ThemeProvider>
       </body>
     </html>

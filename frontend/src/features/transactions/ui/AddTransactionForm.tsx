@@ -152,7 +152,7 @@ export function AddTransactionForm({ onSuccess }: Props) {
 
         {error && <p className="text-destructive text-sm">{error}</p>}
 
-        <Button type="submit" className="w-full" disabled={isPending}>
+        <Button type="submit" size="lg" className="w-full" disabled={isPending}>
           {isPending ? 'Сохраняем...' : 'Добавить транзакцию'}
         </Button>
       </form>
