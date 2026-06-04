@@ -1,5 +1,7 @@
 # Секреты
-.env*
+.env
+.env.local
+.env.production
 
 # Миграции БД
 prisma/migrations/
