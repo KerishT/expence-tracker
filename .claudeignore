@@ -1,0 +1,8 @@
+# Секреты
+.env*
+
+# Миграции БД
+prisma/migrations/
+
+# Lock-файлы
+package-lock.json
