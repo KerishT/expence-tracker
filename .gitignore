@@ -37,3 +37,6 @@ prisma/*.db
 
 # Coverage
 coverage/
+
+# MCP
+.playwright-mcp

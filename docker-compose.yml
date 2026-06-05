@@ -12,5 +12,16 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  dbhub:
+    image: bytebase/dbhub:latest
+    ports:
+      - "8080:8080"
+    command:
+      - "--transport=http"
+      - "--port=8080"
+      - "--dsn=postgresql://postgres:postgres@postgres:5432/expence_tracker?sslmode=disable"
+    depends_on:
+      - postgres
+
 volumes:
   postgres_data:
